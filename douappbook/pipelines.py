@@ -7,6 +7,6 @@ class DouAppBookPipeline(object):
     def process_item(self, item, spider):
         if isinstance(item, BookItem):
             Book.upsert_book(item)
-        elif isinstance(item, CommentItem):
+        elif isinstance(item, RatingItem):
             Rating.upsert_rating(item)
         return item
