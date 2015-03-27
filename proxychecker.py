@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import urllib2
-import socket
 import logging
 import multiprocessing
 from multiprocessing.pool import ThreadPool
+
+import requests
 
 
 logger = logging.getLogger('proxychecker')
@@ -12,16 +12,19 @@ logger = logging.getLogger('proxychecker')
 
 def is_bad_proxy(pip):
     try:
-        proxy_handler = urllib2.ProxyHandler({'https': pip})
-        opener = urllib2.build_opener(proxy_handler)
-        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-        urllib2.install_opener(opener)
-        req = urllib2.Request('https://frodo.douban.com:443/api/v2/')
-        urllib2.urlopen(req)
-    except urllib2.HTTPError as e:
-        logger.error('Error code: %s', e.code)
-        return e.code
-    except Exception, detail:
+        proxies = {
+            'http': pip,
+            'https': pip
+        }
+        requests.get(
+            'https://frodo.douban.com:443/api/v2/',
+            proxies=proxies,
+            timeout=10
+        )
+    except requests.RequestException as e:
+        logger.error('Error: %s', e.message)
+        return True
+    except Exception as detail:
         logger.error('Error: %s', detail)
         return True
     return False
@@ -39,7 +42,6 @@ def check_proxy(pip, index, total):
 
 def main():
     good_proxys = []
-    socket.setdefaulttimeout(10)
     with open('proxylist.txt') as f:
         proxy_list = f.readlines()
 
