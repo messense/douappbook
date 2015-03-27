@@ -56,3 +56,5 @@ docs/_build/
 
 # PyCharm
 .idea/
+
+/local_settings.py
