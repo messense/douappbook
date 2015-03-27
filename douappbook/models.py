@@ -70,14 +70,14 @@ class Book(BaseModel):
 
 class Rating(BaseModel):
     _table = 'rating'
-    _fields = 'id,book_id,user_id,user,rating,vote,comment'
+    _fields = 'id,book_id,user_id,username,rating,vote,comment'
 
     @classmethod
     def upsert_rating(cls, rating):
         if isinstance(rating, scrapy.Item):
             rating = dict(rating)
         sql = """REPLACE INTO {table}({fields}) VALUES(
-            %(id)s,%(book_id)s,%(user_id)s,%(user)s,
+            %(id)s,%(book_id)s,%(user_id)s,%(username)s,
             %(rating)s,%(vote)s,%(comment)s
         )""".format(table=cls._table, fields=cls._fields)
         cursor, conn = cls.get_cursor()
@@ -91,7 +91,7 @@ class Rating(BaseModel):
         id BIGINT NOT NULL PRIMARY KEY,
         book_id BIGINT NOT NULL,
         user_id BIGINT NOT NULL,
-        user VARCHAR(128) NOT NULL,
+        username VARCHAR(128) NOT NULL,
         rating FLOAT NOT NULL,
         vote INT NOT NULL DEFAULT 0,
         comment VARCHAR(700) NULL,
