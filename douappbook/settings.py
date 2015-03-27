@@ -14,3 +14,5 @@ SPIDER_MODULES = ['douappbook.spiders']
 NEWSPIDER_MODULE = 'douappbook.spiders'
 
 USER_AGENT = 'api-client/0.1.3 com.douban.frodo/2.4.1 iOS/8.2 iPhone6,2'
+
+DEBUG = True
