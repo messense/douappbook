@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
+from douappbook.items import BookItem, RatingItem
+from douappbook.models import Book, Rating
 
 
-class DouappbookPipeline(object):
+class DouAppBookPipeline(object):
     def process_item(self, item, spider):
+        if isinstance(item, BookItem):
+            Book.upsert_book(item)
+        elif isinstance(item, CommentItem):
+            Rating.upsert_rating(item)
         return item
