@@ -58,3 +58,5 @@ docs/_build/
 .idea/
 
 /local_settings.py
+/proxy.txt
+/proxylist.txt
