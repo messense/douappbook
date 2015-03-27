@@ -34,7 +34,7 @@ def check_proxy(pip, index, total):
         logger.info("Bad Proxy %s", pip)
         return None
     logger.info("%s is working", pip)
-    return 'https://' + pip
+    return 'http://' + pip
 
 
 def main():
@@ -48,9 +48,9 @@ def main():
     async_results = []
     for index, proxy in enumerate(proxy_list):
         if proxy.startswith('http://'):
-            curr_proxy = proxy[7:].strip()
-        else:
             curr_proxy = proxy.strip()
+        else:
+            curr_proxy = 'http://%s' % proxy.strip()
 
         async_results.append(pool.apply_async(
             check_proxy,
