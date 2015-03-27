@@ -10,18 +10,23 @@ from scrapy import Request
 from douappbook.spiders import DoubanAppSpider
 from douappbook.items import BookItem, RatingItem
 
-class LatestSpider(DoubanAppSpider):
-    name = "latest"
+class BookSpider(DoubanAppSpider):
+    name = "book"
     allowed_domains = ["douban.com"]
-    api_endpoint = 'subject_collection/book_latest/subjects'
+    api_endpoints = [
+        'subject_collection/book_latest/subjects',
+        'subject_collection/book_score/subjects',
+        'subject_collection/book_hot/subjects',
+    ]
 
     def start_requests(self):
-        url = self.get_api_url(
-            self.api_endpoint,
-            start=0,
-            count=20
-        )
-        yield Request(url, callback=self.parse)
+        for endpoint in self.api_endpoints:
+            url = self.get_api_url(
+                endpoint,
+                start=0,
+                count=20
+            )
+            yield Request(url, callback=self.parse)
 
     def parse(self, response):
         res = json.loads(response.body_as_unicode())
@@ -49,8 +54,10 @@ class LatestSpider(DoubanAppSpider):
                 count=20
             )
             yield Request(rating_url, callback=self.parse_rating)
+            if self.settings['DEBUG']:
+                break
 
-        if start + count < total:
+        if start + count < total and not self.settings['DEBUG']:
             url = self.get_api_url(
                 self.api_endpoint,
                 start=start + count,
@@ -78,7 +85,7 @@ class LatestSpider(DoubanAppSpider):
             rating['comment'] = item['comment']
             yield rating
 
-        if start + count < total:
+        if start + count < total and not self.settings['DEBUG']:
             endpoint = 'book/%d/interests' % book_id
             url = self.get_api_url(
                 endpoint,
