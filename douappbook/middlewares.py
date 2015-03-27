@@ -2,11 +2,6 @@
 import re
 import random
 import base64
-import urllib
-try:
-    import urllib.parse as urlparse
-except ImportError:
-    import urlparse
 
 from scrapy import log
 from scrapy.contrib.downloadermiddleware.retry import RetryMiddleware as _RetryMiddleware
@@ -40,7 +35,7 @@ class RetryMiddleware(_RetryMiddleware):
 
     def _retry(self, request, reason, spider):
         retries = request.meta.get('retry_times', 0) + 1
-        last_proxy = request.meta['proxy']
+        last_proxy = request.meta.get('proxy')
         if last_proxy and self.proxies:
             self.proxies.pop(last_proxy, None)
             log.msg('Removing failed proxy <%s>, %d proxies left' % (
