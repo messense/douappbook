@@ -5,6 +5,8 @@ import multiprocessing
 from multiprocessing.pool import ThreadPool
 
 import requests
+import urllib3.contrib.pyopenssl
+urllib3.contrib.pyopensslpyopenssl.inject_into_urllib3()
 
 
 logger = logging.getLogger('proxychecker')
@@ -37,7 +39,7 @@ def check_proxy(pip, index, total):
         logger.info("Bad Proxy %s", pip)
         return None
     logger.info("%s is working", pip)
-    return 'http://' + pip
+    return pip
 
 
 def main():
@@ -73,6 +75,7 @@ def main():
     with open('proxy.txt', 'w') as f:
         for proxy in good_proxys:
             f.write(proxy + '\n')
+
 
 if __name__ == '__main__':
     fmt = logging.Formatter('%(asctime)s %(name)s [%(levelname)s]: %(message)s')
