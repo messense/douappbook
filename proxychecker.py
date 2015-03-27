@@ -5,8 +5,8 @@ import multiprocessing
 from multiprocessing.pool import ThreadPool
 
 import requests
-import urllib3.contrib.pyopenssl
-urllib3.contrib.pyopensslpyopenssl.inject_into_urllib3()
+import requests.packages.urllib3 as urllib3
+urllib3.contrib.pyopenssl.inject_into_urllib3()
 
 
 logger = logging.getLogger('proxychecker')
