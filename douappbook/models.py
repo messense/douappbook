@@ -8,6 +8,8 @@ if __name__ == '__main__':
     proj_path = os.path.dirname(curr_path)
     sys.path.append(proj_path)
 
+import scrapy
+
 from douappbook.settings import db_conn
 
 
