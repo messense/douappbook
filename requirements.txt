@@ -1,0 +1,5 @@
+Scrapy>=0.24.5
+service_identity>=14.0.0
+furl>=0.4.4
+simplejson>=3.6.5
+MySQL-python>=1.2.5
