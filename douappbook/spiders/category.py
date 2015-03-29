@@ -67,4 +67,4 @@ class CategorySpider(DoubanAppSpider):
             _url = furl.furl(response.url)
             _url.args['start'] = start + count
             url = _url.url
-            yield Request(url, callback=self.parse)
+            yield Request(url, callback=self.parse_subjects)
