@@ -4,6 +4,7 @@ try:
 except ImportError:
     import json
 
+import furl
 from scrapy import Request
 
 from douappbook.spiders import DoubanAppSpider
@@ -50,9 +51,7 @@ class BookSpider(DoubanAppSpider):
                 break
 
         if start + count < total and not self.settings['DEBUG']:
-            url = self.get_api_url(
-                self.api_endpoint,
-                start=start + count,
-                count=20
-            )
+            _url = furl.furl(response.url)
+            _url.args['start'] = start + count
+            url = _url.url
             yield Request(url, callback=self.parse)
