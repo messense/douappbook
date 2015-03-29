@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-from datetime import datetime
 
 if __name__ == '__main__':
     curr_path = os.path.abspath(os.path.dirname(__file__))
@@ -96,6 +95,18 @@ class Rating(BaseModel):
         cls.close_cursor(cursor)
 
     @classmethod
+    def get_rating_counts(cls):
+        sql = (
+            "SELECT book_id,count(id) as rating_count FROM {table}"
+            " GROUP BY book_id ORDER BY rating_count ASC"
+        ).format(table=cls._table)
+        cursor, conn = cls.get_cursor()
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        cls.close_cursor(cursor)
+        return rows
+
+    @classmethod
     def create_table(cls):
         sql = """CREATE TABLE IF NOT EXISTS {table} (
         id BIGINT NOT NULL PRIMARY KEY,
@@ -117,6 +128,64 @@ class Rating(BaseModel):
         cls.close_cursor(cursor)
 
 
+class CrawledBook(BaseModel):
+    _table = 'crawled_book'
+    _fields = 'book_id,rating_count'
+
+    @classmethod
+    def upsert_book(cls, book_id, rating_count=0):
+        sql = """REPLACE INTO {table}({fields}) VALUES(
+            %(book_id)s,%(rating_count)s
+        )""".format(table=cls._table, fields=cls._fields)
+        book = {
+            'book_id': book_id,
+            'rating_count': rating_count,
+        }
+        cursor, conn = cls.get_cursor()
+        cursor.execute(sql, book)
+        conn.commit()
+        cls.close_cursor(cursor)
+
+    @classmethod
+    def rebuild(cls):
+        all_book_ids = Book.get_book_ids()
+        rating_counts = Rating.get_rating_counts()
+        book_ids = set([r[0] for r in rating_counts])
+        for count in rating_counts:
+            book_id = count[0]
+            rating_count = count[1]
+            cls.upsert_book(book_id, rating_count)
+
+        no_rating_ids = all_book_ids - book_ids
+        for book_id in no_rating_ids:
+            cls.upsert_book(book_id, 0)
+
+    @classmethod
+    def get_book_ids(cls):
+        sql = "SELECT book_id FROM {table} ORBER BY rating_count ASC".format(
+            table=cls._table
+        )
+        cursor, conn = cls.get_cursor()
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        cls.close_cursor(cursor)
+        ids = [row[0] for row in rows]
+        return set(ids)
+
+    @classmethod
+    def create_table(cls):
+        sql = """CREATE TABLE IF NOT EXISTS {table} (
+        book_id BIGINT NOT NULL PRIMARY KEY,
+        rating_count INT NOT NULL DEFAULT 0,
+        INDEX(rating_count)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+        """.format(table=cls._table)
+        cursor, conn = cls.get_cursor()
+        cursor.execute(sql)
+        conn.commit()
+        cls.close_cursor(cursor)
+
 if __name__ == '__main__':
     Book.create_table()
     Rating.create_table()
+    CrawledBook.create_table()

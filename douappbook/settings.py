@@ -17,6 +17,7 @@ BOT_NAME = 'douappbook'
 
 SPIDER_MODULES = ['douappbook.spiders']
 NEWSPIDER_MODULE = 'douappbook.spiders'
+COMMANDS_MODULE = 'douappbook.commands'
 
 USER_AGENT = 'api-client/0.1.3 com.douban.frodo/2.4.1 iOS/8.2 iPhone6,2'
 
