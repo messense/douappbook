@@ -42,6 +42,7 @@ def check_proxy(pip, index, total, f, lock):
     logger.info("%s is working", pip)
     with lock:
         f.write(pip + '\n')
+        f.flush()
 
 
 def main():
