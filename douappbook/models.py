@@ -48,6 +48,16 @@ class Book(BaseModel):
         cls.close_cursor(cursor)
 
     @classmethod
+    def get_book_ids(cls):
+        sql = "SELECT id FROM {table}".format(table=cls._table)
+        cursor, conn = cls.get_cursor()
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        cls.close_cursor(cursor)
+        ids = [row[0] for row in rows]
+        return set(ids)
+
+    @classmethod
     def create_table(cls):
         sql = """CREATE TABLE IF NOT EXISTS {table}(
         id BIGINT NOT NULL PRIMARY KEY,
