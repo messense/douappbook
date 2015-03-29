@@ -42,7 +42,7 @@ class RetryMiddleware(_RetryMiddleware):
                 last_proxy, len(self.proxies))
             )
 
-        if retries <= self.max_retry_times:
+        if not self.proxies and retries <= self.max_retry_times:
             log.msg(format="Retrying %(request)s (failed %(retries)d times): %(reason)s",
                     level=log.DEBUG, spider=spider, request=request, retries=retries, reason=reason)
 
