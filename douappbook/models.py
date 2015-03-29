@@ -107,6 +107,19 @@ class Rating(BaseModel):
         return rows
 
     @classmethod
+    def get_book_rating_ids(cls, book_id):
+        sql = "SELECT id FROM {table} WHERE book_id=%(book_id)s".format(
+            table=cls._table
+        )
+        data = {'book_id': book_id}
+        cursor, conn = cls.get_cursor()
+        cursor.execute(sql, data)
+        rows = cursor.fetchall()
+        cls.close_cursor(cursor)
+        rating_ids = [row[0] for row in rows]
+        return set(rating_ids)
+
+    @classmethod
     def create_table(cls):
         sql = """CREATE TABLE IF NOT EXISTS {table} (
         id BIGINT NOT NULL PRIMARY KEY,
@@ -145,6 +158,21 @@ class CrawledBook(BaseModel):
         cursor.execute(sql, book)
         conn.commit()
         cls.close_cursor(cursor)
+
+    @classmethod
+    def get_book(cls, book_id):
+        sql = "SELECT {fields} FROM {table} WHERE book_id=%(book_id)s".format(
+            table=cls._table,
+            fields=cls._fields
+        )
+        data = {'book_id': book_id}
+        cursor, conn = cls.get_cursor()
+        cursor.execute(sql, data)
+        row = cursor.fetchone()
+        cls.close_cursor(cursor)
+        if not row:
+            return None
+        return {'book_id': row[0], 'rating_count': row[1]}
 
     @classmethod
     def rebuild(cls):
