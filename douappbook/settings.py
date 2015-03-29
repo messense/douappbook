@@ -29,6 +29,9 @@ ITEM_PIPELINES = {
     'douappbook.pipelines.DouAppBookPipeline': 300,
 }
 
+COOKIES_ENABLED = False
+REDIRECT_ENABLED = False
+
 # Retry many times since proxies often fail
 RETRY_TIMES = 10
 # Retry on most error codes since proxies fail for different reasons
@@ -36,8 +39,7 @@ RETRY_HTTP_CODES = [500, 503, 504, 403, 404, 408]
 
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': None,
-    'douappbook.middlewares.RetryMiddleware': 100,
-    'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
+    'douappbook.middlewares.RetryMiddleware': 500,
 }
 
 # Proxy list containing entries like
