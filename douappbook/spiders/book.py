@@ -25,7 +25,7 @@ class BookSpider(DoubanAppSpider):
             url = self.get_api_url(
                 endpoint,
                 start=0,
-                count=20
+                count=50
             )
             yield Request(url, callback=self.parse)
 

@@ -19,7 +19,7 @@ class CategorySpider(DoubanAppSpider):
         url = self.get_api_url(
             'tag/3/categories',
             start=0,
-            count=20,
+            count=50,
             editor_choice=0
         )
         yield Request(url, callback=self.parse)
@@ -34,7 +34,7 @@ class CategorySpider(DoubanAppSpider):
                 url = self.get_api_url(
                     endpoint,
                     start=0,
-                    count=20
+                    count=50
                 )
                 yield Request(url, callback=self.parse_subjects)
                 if self.settings['DEBUG']:

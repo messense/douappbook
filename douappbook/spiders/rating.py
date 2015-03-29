@@ -26,7 +26,7 @@ class RatingSpider(DoubanAppSpider):
             url = self.get_api_url(
                 endpoint,
                 start=0,
-                count=20
+                count=50
             )
             yield Request(url, callback=self.parse)
             if self.settings['DEBUG']:
@@ -57,6 +57,6 @@ class RatingSpider(DoubanAppSpider):
             url = self.get_api_url(
                 endpoint,
                 start=start + count,
-                count=20
+                count=50
             )
             yield Request(url, callback=self.parse)

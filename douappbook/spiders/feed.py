@@ -19,7 +19,7 @@ class FeedSpider(DoubanAppSpider):
         url = self.get_api_url(
             self.api_endpoint,
             start=0,
-            count=15
+            count=50
         )
         yield Request(url, callback=self.parse)
 
@@ -58,6 +58,6 @@ class FeedSpider(DoubanAppSpider):
             url = self.get_api_url(
                 self.api_endpoint,
                 start=start + count,
-                count=15
+                count=50
             )
             yield Request(url, callback=self.parse)
