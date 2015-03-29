@@ -190,7 +190,7 @@ class CrawledBook(BaseModel):
 
     @classmethod
     def get_book_ids(cls):
-        sql = "SELECT book_id FROM {table} ORBER BY rating_count ASC".format(
+        sql = "SELECT book_id FROM {table} ORDER BY rating_count ASC".format(
             table=cls._table
         )
         cursor, conn = cls.get_cursor()
