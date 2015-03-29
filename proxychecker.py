@@ -3,6 +3,7 @@
 import logging
 import multiprocessing
 from multiprocessing.pool import ThreadPool
+from threading import Lock
 
 import requests
 import requests.packages.urllib3 as urllib3
@@ -32,49 +33,42 @@ def is_bad_proxy(pip):
     return False
 
 
-def check_proxy(pip, index, total):
+def check_proxy(pip, index, total, f, lock):
     logger.info('Checking %d/%d %s', index, total, pip)
 
     if is_bad_proxy(pip):
         logger.info("Bad Proxy %s", pip)
-        return None
+        return
     logger.info("%s is working", pip)
-    return pip
+    with lock:
+        f.write(pip + '\n')
 
 
 def main():
-    good_proxys = []
     with open('proxylist.txt') as f:
         proxy_list = f.readlines()
 
+    f = open('proxy.txt', 'w')
+    lock = Lock()
     total = len(proxy_list)
     pool = ThreadPool(multiprocessing.cpu_count() * 2 + 1)
-    async_results = []
-    for index, proxy in enumerate(proxy_list):
-        if proxy.startswith('http://'):
-            curr_proxy = proxy.strip()
-        else:
-            curr_proxy = 'http://%s' % proxy.strip()
+    try:
+        for index, proxy in enumerate(proxy_list):
+            if proxy.startswith('http://'):
+                curr_proxy = proxy.strip()
+            else:
+                curr_proxy = 'http://%s' % proxy.strip()
 
-        async_results.append(pool.apply_async(
-            check_proxy,
-            args=(curr_proxy, index, total)
-        ))
-    pool.close()
-    pool.join()
-
-    for result in async_results:
-        proxy = result.get()
-        if proxy:
-            good_proxys.append(proxy)
-
-    if not good_proxys:
-        print 'No proxy are working!'
-        return
-
-    with open('proxy.txt', 'w') as f:
-        for proxy in good_proxys:
-            f.write(proxy + '\n')
+            pool.apply_async(
+                check_proxy,
+                args=(curr_proxy, index, total, f, lock)
+            )
+        pool.close()
+        pool.join()
+    except KeyboardInterrupt:
+        logger.info('Received control-c, terminating...')
+        pool.terminate()
+    f.close()
 
 
 if __name__ == '__main__':
