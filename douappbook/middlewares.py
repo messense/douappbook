@@ -36,7 +36,8 @@ class RetryMiddleware(_RetryMiddleware):
     def _retry(self, request, reason, spider):
         retries = request.meta.get('retry_times', 0) + 1
         last_proxy = request.meta.get('proxy')
-        if last_proxy and self.proxies:
+        remove_failed_proxy = spider.settings.get('REMOVE_FAILED_PROXY', False)
+        if remove_failed_proxy and last_proxy and self.proxies:
             self.proxies.pop(last_proxy, None)
             log.msg('Removing failed proxy <%s>, %d proxies left' % (
                 last_proxy, len(self.proxies))

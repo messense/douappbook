@@ -49,6 +49,7 @@ DOWNLOADER_MIDDLEWARES = {
 # http://host3:port
 # ...
 PROXY_LIST = os.path.join(PROJ_PATH, 'proxy.txt')
+REMOVE_FAILED_PROXY = False
 
 DB_CONF = {
     'host': 'localhost',
