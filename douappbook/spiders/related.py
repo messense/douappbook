@@ -21,7 +21,7 @@ class RelatedSpider(DoubanAppSpider):
         book_ids = Book.get_book_ids()
         random.shuffle(book_ids)
         for book_id in book_ids:
-            endpoint = 'book/%d/related_doulists'
+            endpoint = 'book/%d/related_doulists' % book_id
             url = self.get_api_url(
                 endpoint,
                 start=0,
