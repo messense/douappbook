@@ -54,7 +54,7 @@ class Book(BaseModel):
         rows = cursor.fetchall()
         cls.close_cursor(cursor)
         ids = [row[0] for row in rows]
-        return set(ids)
+        return ids
 
     @classmethod
     def create_table(cls):
@@ -117,7 +117,7 @@ class Rating(BaseModel):
         rows = cursor.fetchall()
         cls.close_cursor(cursor)
         rating_ids = [row[0] for row in rows]
-        return set(rating_ids)
+        return rating_ids
 
     @classmethod
     def create_table(cls):
@@ -198,7 +198,7 @@ class CrawledBook(BaseModel):
         rows = cursor.fetchall()
         cls.close_cursor(cursor)
         ids = [row[0] for row in rows]
-        return set(ids)
+        return ids
 
     @classmethod
     def create_table(cls):

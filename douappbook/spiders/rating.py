@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import random
 try:
     import simplejson as json
 except ImportError:
@@ -18,6 +19,8 @@ class RatingSpider(DoubanAppSpider):
 
     def start_requests(self):
         book_ids = CrawledBook.get_book_ids()
+        # randomize book ids
+        random.shuffle(book_ids)
         for book_id in book_ids:
             endpoint = 'book/%d/interests' % book_id
             url = self.get_api_url(
