@@ -10,6 +10,7 @@ from scrapy import Request
 from douappbook.spiders import DoubanAppSpider
 from douappbook.items import BookItem, RatingItem
 
+
 class BookSpider(DoubanAppSpider):
     name = "book"
     allowed_domains = ["douban.com"]
