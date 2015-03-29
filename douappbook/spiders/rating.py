@@ -56,4 +56,4 @@ class RatingSpider(DoubanAppSpider):
                 start=start + count,
                 count=20
             )
-            yield Request(url, callback=self.parse_rating)
+            yield Request(url, callback=self.parse)
