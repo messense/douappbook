@@ -42,6 +42,11 @@ class RetryMiddleware(_RetryMiddleware):
             log.msg('Removing failed proxy <%s>, %d proxies left' % (
                 last_proxy, len(self.proxies))
             )
+        elif isinstance(reason, self.EXCEPTIONS_TO_RETRY):
+            self.proxies.pop(last_proxy, None)
+            log.msg('Removing useless proxy <%s>, %d proxies left' % (
+                last_proxy, len(self.proxies))
+            )
 
         if self.proxies or retries <= self.max_retry_times:
             log.msg(format="Retrying %(request)s (failed %(retries)d times): %(reason)s",
